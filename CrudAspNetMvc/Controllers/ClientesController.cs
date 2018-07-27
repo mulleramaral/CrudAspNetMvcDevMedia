@@ -61,5 +61,22 @@ namespace CrudAspNetMvc.Controllers
             ViewBag.Estados = new SelectList(estados, "Sigla", "Nome");
             return View();
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(Cliente cliente)
+        {
+            if (db.Clientes.Count(c => c.CPF == cliente.CPF) > 0)
+                ModelState.AddModelError("CPF", "Esse CPF ja está em uso");
+
+            if (ModelState.IsValid)
+            {
+                db.Clientes.Add(cliente);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            ViewBag.Estados = new SelectList(estados, "Sigla", "Nome");
+            return View(cliente);
+        }
     }
 }
